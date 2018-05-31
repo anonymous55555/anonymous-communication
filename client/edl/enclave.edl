@@ -1,0 +1,31 @@
+/* Enclave.edl - Top EDL file. */
+
+#define INCLUDING_FROM_EDL
+#include "../../include/config.h"
+
+enclave {
+	from "sgx_tae_service.edl" import *;
+
+    trusted {
+        public void ecall_init();
+        public void ecall_network_init(uint8_t ip1, uint8_t ip2, uint8_t ip3, uint8_t ip4, uint64_t port);
+        public void ecall_received_msg_from_server([in, count=len] const uint8_t *ptr, size_t len);
+
+        public void ecall_generate_pseudonym([out] uint8_t pseudonym[PSEUDONYM_SIZE]);
+        public void ecall_send_message([in] uint8_t n_src[PSEUDONYM_SIZE], [in] uint8_t msg[MESSAGE_SIZE], [in] uint8_t n_dst[PSEUDONYM_SIZE], uint64_t t_dst);
+        public int ecall_receive_message([in] uint8_t n_dst[PSEUDONYM_SIZE], [out] uint8_t msg[MESSAGE_SIZE], [out] uint8_t n_src[PSEUDONYM_SIZE], [out] uint64_t* t_dst);
+        public int ecall_traffic_out(); // returns whether successful or not
+        public void ecall_traffic_in([in, size=len] const uint8_t *ptr, size_t len);
+
+        public uint64_t ecall_get_time();
+
+    };
+
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+        void ocall_send_msg_to_server([in, size=len] const uint8_t *ptr, size_t len);
+
+        void ocall_traffic_out_return([in, size=len] const uint8_t *ptr, size_t len);
+    };
+
+};

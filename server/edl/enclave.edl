@@ -1,0 +1,16 @@
+/* Enclave.edl - Top EDL file. */
+
+enclave {
+    trusted {
+        public void ecall_init();
+        public void ecall_received_msg_from_client([in, size=msg_len] const char *msg, size_t msg_len);
+        public int ecall_main_loop();
+
+    };
+
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+        void ocall_send_msg_to_client([in, string] const char *client_uri, [in, size=msg_len] const char *msg, size_t msg_len);
+    };
+
+};
